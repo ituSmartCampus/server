@@ -1,0 +1,219 @@
+basePath: /api/v1
+definitions:
+  auth.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.SigninSchema:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.SignupSchema:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  data.CreateDataSchema:
+    properties:
+      email:
+        type: string
+      location:
+        type: string
+      measuredValue:
+        type: string
+      sensorType:
+        type: string
+      time:
+        type: string
+    required:
+    - email
+    - location
+    - measuredValue
+    - sensorType
+    - time
+    type: object
+  data.CreateSuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  data.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  data.GetSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Data'
+      message:
+        type: string
+    type: object
+  data.ListSuccessResponse:
+    properties:
+      datas:
+        items:
+          $ref: '#/definitions/models.Data'
+        type: array
+      message:
+        type: string
+    type: object
+  models.Data:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      measuredValue:
+        type: string
+      sensorType:
+        type: string
+      time:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API for managing Smart Campus data and authentication
+  title: Smart Campus API
+  version: "1.0"
+paths:
+  /api/data/create:
+    post:
+      consumes:
+      - application/json
+      description: Create multiple data records in the database
+      parameters:
+      - description: Array of data records to create
+        in: body
+        name: CreateDataInput
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/data.CreateDataSchema'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.CreateSuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/data.ErrorResponse'
+      summary: Create multiple data records
+      tags:
+      - Data
+  /api/data/get/{id}:
+    get:
+      description: Retrieve a data record from the database based on its ID
+      parameters:
+      - description: Data ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.GetSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/data.ErrorResponse'
+      summary: Get a single data record by ID
+      tags:
+      - Data
+  /api/data/list:
+    get:
+      description: Retrieve a list of data records from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.ListSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/data.ErrorResponse'
+      summary: Get a list of data records
+      tags:
+      - Data
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password
+      parameters:
+      - description: User authentication input
+        in: body
+        name: signInInput
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SigninSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+        "400":
+          description: incorrect credentials
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Authenticate user
+      tags:
+      - Authentication
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with email and password
+      parameters:
+      - description: User registration input
+        in: body
+        name: signUpInput
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignupSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+        "400":
+          description: user exists
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - Authentication
+swagger: "2.0"
