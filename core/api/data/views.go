@@ -43,6 +43,42 @@ func List(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, ListSuccessResponse{Message: "success", Datas: datas})
 }
+func ListMoisture(c *gin.Context) {
+	var datas []models.Data
+	if err := models.DB.Model(&models.Data{}).Find(&datas, "sensor_type=?", "moisture").Error; err != nil {
+		c.JSON(400, ErrorResponse{Message: err.Error()})
+		return
+	}
+	if len(datas) == 0 {
+		c.JSON(400, ErrorResponse{Message: "data yok"})
+		return
+	}
+	c.JSON(http.StatusOK, ListSuccessResponse{Message: "success", Datas: datas})
+}
+func ListTemperature(c *gin.Context) {
+	var datas []models.Data
+	if err := models.DB.Model(&models.Data{}).Find(&datas, "sensor_type=?", "temperature").Error; err != nil {
+		c.JSON(400, ErrorResponse{Message: err.Error()})
+		return
+	}
+	if len(datas) == 0 {
+		c.JSON(400, ErrorResponse{Message: "data yok"})
+		return
+	}
+	c.JSON(http.StatusOK, ListSuccessResponse{Message: "success", Datas: datas})
+}
+func ListAir(c *gin.Context) {
+	var datas []models.Data
+	if err := models.DB.Model(&models.Data{}).Find(&datas, "sensor_type=?", "air").Error; err != nil {
+		c.JSON(400, ErrorResponse{Message: err.Error()})
+		return
+	}
+	if len(datas) == 0 {
+		c.JSON(400, ErrorResponse{Message: "data yok"})
+		return
+	}
+	c.JSON(http.StatusOK, ListSuccessResponse{Message: "success", Datas: datas})
+}
 
 // Get godoc
 // @Summary Get a single data record by ID
@@ -84,7 +120,7 @@ type CreateDataSchema struct {
 // @Failure 500 {object} ErrorResponse
 // @Router /api/data/create [post]
 func Create(c *gin.Context) {
-	data := c.MustGet("CreateDataInput").([]CreateDataSchema)
+	data := c.MustGet("CreateDataInput").([]models.Data)
 
 	batchSize := 100
 

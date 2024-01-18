@@ -2,7 +2,9 @@ package auth
 
 import (
 	"net/http"
+	"net/mail"
 	"smartCampus/core/models"
+	"smartCampus/core/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hlandau/passlib"
@@ -69,13 +71,29 @@ func Signin(c *gin.Context) {
 	if user.CheckPassword(data.Password) != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Message: "incorrect credentials"})
 	}
-	// token, err := utils.GenerateJWT(user.ID)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"message": "token can not be created!",
-	// 	})
-	// 	return
-	// }
+	token, err := utils.GenerateJWT(user.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "token can not be created!",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success", "token": token,
+	})
+
+}
+
+func Checkemail(c *gin.Context) {
+
+	email := c.Param("email")
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Error": err.Error(),
+		})
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "success",

@@ -3,12 +3,13 @@ package data
 import (
 	"io"
 	"net/http"
+	"smartCampus/core/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateDataMiddleware(c *gin.Context) {
-	var data []CreateDataSchema
+	var data []models.Data
 
 	if err := c.BindJSON(&data); err != nil {
 		if err == io.EOF {
