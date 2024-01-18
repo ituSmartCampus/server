@@ -47,5 +47,5 @@ func main() {
 	// }
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	router.Run("127.0.0.1:3131")
+	router.Run("0.0.0.0:3131")
 }
